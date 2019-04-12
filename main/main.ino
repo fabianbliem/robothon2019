@@ -15,6 +15,7 @@ MePort port(PORT_5);
 Servo myservo1;  // create servo object to control a servo 
 int16_t servo1pin =  port.pin1();//attaches the servo on PORT_3 SLOT1 to the servo object
 
+MeUltrasonicSensor ultraSensor(PORT_10); /* Ultrasonic module can ONLY be connected to port 3, 4, 6, 7, 8 of base shield. */
 
 void setup()
 {
@@ -62,12 +63,15 @@ void loop()
   // myservo1.write(0);                  
   // delay(2000);                           
   // myservo1.write(180);
-  // delay(2000); 
+  // delay(2000);
+  Serial.println(ultraSensor.distanceCm());
+  myservo1.write(ultraSensor.distanceCm());
+  delay(100);
 
-  moveForward(_desiredSpeed);
-  delay(3000);
-  resetSpeed();
-  delay(1000);
+  // moveForward(_desiredSpeed);
+  // delay(3000);
+  // resetSpeed();
+  // delay(1000);
 
   _dir = !_dir;
 }
