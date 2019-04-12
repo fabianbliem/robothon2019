@@ -13,11 +13,36 @@ int _desiredSpeed;
 
 void setup()
 {
+
+  Serial.begin(9600);
+}
+
+void initWheels() {
   motor1.begin();
   motor2.begin();
   motor3.begin();
   motor4.begin();
-  Serial.begin(9600);
+}
+
+void moveForward() {
+  motor1.runSpeed(_desiredSpeed);
+  motor2.runSpeed(-_desiredSpeed);
+  motor3.runSpeed(-_desiredSpeed);
+  motor4.runSpeed(_desiredSpeed);
+}
+
+void moveSideways() {
+  motor1.runSpeed(-_desiredSpeed);
+  motor2.runSpeed(-_desiredSpeed);
+  motor3.runSpeed(_desiredSpeed);
+  motor4.runSpeed(_desiredSpeed);
+}
+
+void resetSpeed() {
+  motor1.runSpeed(0);
+  motor2.runSpeed(0);
+  motor3.runSpeed(0);
+  motor4.runSpeed(0);
 }
 
 void loop()
@@ -29,15 +54,10 @@ void loop()
   }
   //forward +--+
   //right ++--
-  motor1.runSpeed(_desiredSpeed);
-  motor2.runSpeed(-_desiredSpeed);
-  motor3.runSpeed(-_desiredSpeed);
-  motor4.runSpeed(_desiredSpeed);
+
+  moveForward();
   delay(3000);
-  motor1.runSpeed(0);
-  motor2.runSpeed(0);
-  motor3.runSpeed(0);
-  motor4.runSpeed(0);
+  resetSpeed();
   delay(3000);
 
   _dir = !_dir;
