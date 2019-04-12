@@ -11,9 +11,15 @@ bool _dir = false;
 int _speed = 50;
 int _desiredSpeed;
 
+MePort port(PORT_5);
+Servo myservo1;  // create servo object to control a servo 
+int16_t servo1pin =  port.pin1();//attaches the servo on PORT_3 SLOT1 to the servo object
+
+
 void setup()
 {
-
+  initWheels();
+  myservo1.attach(servo1pin);  // attaches the servo on servopin1
   Serial.begin(9600);
 }
 
@@ -24,18 +30,18 @@ void initWheels() {
   motor4.begin();
 }
 
-void moveForward() {
-  motor1.runSpeed(_desiredSpeed);
-  motor2.runSpeed(-_desiredSpeed);
-  motor3.runSpeed(-_desiredSpeed);
-  motor4.runSpeed(_desiredSpeed);
+void moveForward(int s) {
+  motor1.runSpeed(s);
+  motor2.runSpeed(-s);
+  motor3.runSpeed(-s);
+  motor4.runSpeed(s);
 }
 
-void moveSideways() {
-  motor1.runSpeed(-_desiredSpeed);
-  motor2.runSpeed(-_desiredSpeed);
-  motor3.runSpeed(_desiredSpeed);
-  motor4.runSpeed(_desiredSpeed);
+void moveSideways(int s) {
+  motor1.runSpeed(-s);
+  motor2.runSpeed(-s);
+  motor3.runSpeed(s);
+  motor4.runSpeed(s);
 }
 
 void resetSpeed() {
@@ -52,13 +58,16 @@ void loop()
   }else{
     _desiredSpeed = -_speed;
   }
-  //forward +--+
-  //right ++--
 
-  moveForward();
+  // myservo1.write(0);                  
+  // delay(2000);                           
+  // myservo1.write(180);
+  // delay(2000); 
+
+  moveForward(_desiredSpeed);
   delay(3000);
   resetSpeed();
-  delay(3000);
+  delay(1000);
 
   _dir = !_dir;
 }
