@@ -48,6 +48,8 @@ MeLineFollower lineFinderRight(PORT_8);
 
 int state;
 
+bool ignoreDetection;
+
 void initWheels()
 {
   motor1.begin();
@@ -113,6 +115,73 @@ void spinAround(int s)
   motor4.runSpeed(s);
 }
 
+void pickup() {
+    resetSpeed();
+    delay(1000);
+    crane.write(180); //front
+    delay(3000);
+
+    //open claw
+    claw.run(-50);
+    delay(2000);
+    claw.stop();
+
+    delay(1000);
+
+    needle.run(-50);
+    delay(2000);
+    needle.stop();
+    delay(1000);
+    
+    needle.run(50);
+    delay(3500);
+    needle.stop();
+    delay(1000);
+
+    //close claw
+    claw.run(50);
+    delay(3000);
+    claw.stop();
+
+    state = PUT_ITEM;
+    // crane.write(0); //basket
+    // delay(5000);
+}
+
+void put() {
+    delay(1000);
+
+    crane.write(0); 
+    delay(3000);
+
+     //open claw
+    claw.run(-50);
+    delay(2000);
+    claw.stop();
+    delay(1000);
+
+    needle.run(-50);
+    delay(1000);
+    needle.stop();
+    delay(1000);
+
+    //close claw
+    claw.run(50);
+    delay(3000);
+    claw.stop();
+    delay(1000);
+
+    needle.run(50);
+    delay(2000);
+    needle.stop();
+    delay(1000);
+
+    claw.run(-50);
+    delay(3000);
+    claw.stop();
+    delay(1000);
+}
+
 void setup()
 {
   initWheels();
@@ -130,7 +199,7 @@ void loop()
   int lineStateForward = lineFinderForward.readSensors();
   int lineStateRight = lineFinderRight.readSensors();
   float dist = ultraSensorLeft.distanceCm();
-
+  float distForward = ultraSensorForward.distanceCm();
   switch (state)
   {
   case SEARCH_BORDER:
@@ -144,6 +213,12 @@ void loop()
     break;
   case SEARCH_ITEM:
     moveForward(MOTOR_SPEED);
+
+    if(ignoreDetection){
+      delay(2000);
+      ignoreDetection = false;
+    }
+
     if (dist < 100)
     {
       float a = sin(deg2Rad(15.0)) * dist;
@@ -152,6 +227,29 @@ void loop()
       delay((int)(time*1000));
 
       state = GO_TO_ITEM;
+    }
+    if(distForward < 6) {
+      resetSpeed();
+      delay(1000);
+      // moveBackwards(MOTOR_SPEED);
+      // delay(300);
+      //spinAround(-MOTOR_SPEED);
+      //delay(2600);
+      
+      // pickup();
+      // put();
+
+      //spinAround(MOTOR_SPEED);
+      // delay(2600);
+
+      moveLeft(MOTOR_SPEED);
+
+      delay(2000);
+
+      moveForward(MOTOR_SPEED);
+      delay(4000);
+
+      state = SEARCH_BORDER;
     }
     if(lineStateForward == BLACK){
       resetSpeed();
@@ -230,6 +328,16 @@ void loop()
     delay(2000);
     needle.stop();
     delay(1000);
+
+    claw.run(-50);
+    delay(3000);
+    claw.stop();
+    delay(1000);
+
+    ignoreDetection = true;
+
+    state = SEARCH_BORDER;
+
     break;
   case IDLE:
     break;
